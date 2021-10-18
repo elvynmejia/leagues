@@ -38,8 +38,14 @@ const fetchStats = async () => {
 
 class UnknownTableHeaderKey extends Error {}
 
-const customCellStyles = ({ color = 'red', key }) => {
-  return key === 'PTS' || key === 'Time/Status' ? { color }: {};
+const customCellStyles = ({ color = 'red', key, ...rest } = {}) => {
+  const validCells = [
+    'PTS',
+    'Time/Status',
+    'Date'
+  ];
+
+  return validCells.includes(key) ? { color: color, ...rest }: {};
 }
 
 const App = () => {
