@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const got = require('got');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
@@ -13,22 +12,30 @@ const SFF_URL =
   'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx';
 
 const VALID_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
-const INVALID_HEADERS = ['', 'Calendar Sync'];
+const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
 
 const parseStats = (context, element) => {
   return element
     .children()
     .toArray()
     .map((e) => context(e).text().trim())
-    .filter((e) => e != 'Get CalendarCopy Sync URL');
+    .filter((e) => !INVALID_HEADERS.includes(e));
 };
 
 const getStats = async (url) => {}
 
 const scrapper = async () => {
-  // try/cath
-  const response = await axios.get(SFF_URL);
-  const $ = cheerio.load(response.data);
+  let data = [];
+
+  try {
+     const response = await axios.get(SFF_URL);
+     data = response.data;
+  } catch(e) {
+    console.error('Error loading stats data');
+    return [];
+  }
+
+  const $ = cheerio.load(data);
 
   const body = $('#ctl00_C_Standings_GridView1 > tbody');
 
@@ -65,5 +72,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Listening at http://localhost:${port}`);
 });
