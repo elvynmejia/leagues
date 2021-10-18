@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
+import { useQuery } from 'react-query'
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import logo from './logo.svg';
 import './App.css';
 
 const HEADERS = {
@@ -45,15 +43,20 @@ const pointsCellStyles = ({ color = 'red', key }) => {
 }
 
 const App = () => {
-  const [data, setData] = useState({
-    standings: [],
-    schedule: []
-  });
+  const {
+    isLoading,
+    isError,
+    data,
+    error
+  } = useQuery('sff-data', fetchStats);
 
-  useEffect(async () => {
-    const dt = await fetchStats();
-    setData(dt);
-  }, []);
+  if (isLoading) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
 
   const columns = [
     ...Object.keys(data.standings[0] || {}).map((key, index) => {
