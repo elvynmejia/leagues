@@ -2,11 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const morgan = require('morgan');
 
 const app = express();
-app.use(cors());
 
-const port = 3001;
+app.use(cors());
+app.use(morgan('tiny'));
+
+const port = process.env.PORT || 3001;
 
 const SFF_URL =
   'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx';
@@ -39,17 +42,17 @@ const scrapper = async () => {
 
   const $ = cheerio.load(data);
 
-  const body = $('#ctl00_C_Standings_GridView1 > tbody');
+  // parse standings
+  const standingsTable = $('#ctl00_C_Standings_GridView1 > tbody');
+  const [standingsHeaderRow, ...standingBodyRows] = $(standingsTable.children());
 
-  const [headerRow, ...bodyRows] = $(body.children());
-
-  let headers = $(headerRow)
+  let headers = $(standingsHeaderRow)
     .children()
     .toArray()
     .map((element) => $(element).text().trim())
     .filter((header) => VALID_STANDINGS_HEADERS.includes(header));
 
-  const stats = $(bodyRows)
+  const stats = $(standingBodyRows)
     .toArray()
     .map((e) => parseStats($, $(e)));
 
@@ -64,8 +67,9 @@ const scrapper = async () => {
     }, {});
   });
 
+  // parse schedule
   const scheduleTable = $('#ctl00_C_Schedule1_GridView1 > tbody');
-  const [scheduleHeaderRow, ...scheduleBody] = $(scheduleTable.children());
+  const [scheduleHeaderRow, ...scheduleBodyRows] = $(scheduleTable.children());
 
   const scheduleHeaders = $(scheduleHeaderRow)
     .children()
@@ -73,7 +77,7 @@ const scrapper = async () => {
     .map(e => $(e).text().trim())
     .filter(e => VALID_SCHEDULE_HEADERS.includes(e))
 
-  const schedule = $(scheduleBody).toArray().map((item, i) => {
+  const schedule = $(scheduleBodyRows).toArray().map((item, i) => {
     return $(item)
       .children()
       .toArray()

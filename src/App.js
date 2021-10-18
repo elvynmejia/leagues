@@ -38,7 +38,7 @@ const fetchStats = async () => {
 
 class UnknownTableHeaderKey extends Error {}
 
-const pointsCellStyles = ({ color = 'red', key }) => {
+const customCellStyles = ({ color = 'red', key }) => {
   return key === 'PTS' || key === 'Time/Status' ? { color }: {};
 }
 
@@ -58,8 +58,10 @@ const App = () => {
     return <span>Error: {error.message}</span>
   }
 
+  const { standings, schedule } = data;
+
   const columns = [
-    ...Object.keys(data.standings[0] || {}).map((key, index) => {
+    ...Object.keys(standings[0] || {}).map((key, index) => {
 
       if (!HEADERS[key]) {
         throw new UnknownTableHeaderKey(`Unknown header key: ${key}`)
@@ -75,10 +77,15 @@ const App = () => {
   return (
     <>
       <TableContainer component={Paper}>
-      <h4>Standings</h4>
-        <Standings headers={columns} rows={data.standings} />
-      <h4>Schedule</h4>
-      <Schedule headers={Object.keys(data.schedule[0] || {})} rows={data.schedule} />
+        <Standings
+          headers={columns}
+          rows={standings}
+        />
+
+        <Schedule
+          headers={Object.keys(schedule[0] || {})}
+          rows={schedule}
+        />
       </TableContainer>
     </>
   );
@@ -86,51 +93,55 @@ const App = () => {
 
 const Standings = ({ headers, rows }) => {
   return (
-    <Table aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          {headers.map(({ fieldName, headerName }, index) => {
-            return(
-              <TableCell
-                key={fieldName}
-                style={{
-                  textAlign: 'left',
-                  ...(pointsCellStyles({ key: fieldName }))
-                }}
-              >
-                {headerName}
-              </TableCell>)
-          })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((row, idx) => (
-          <TableRow
-            key={`row-${idx}`}
-          >
-            {Object.keys(row).map(key => {
-              return (
+    <>
+      <h4>Standings</h4>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            {headers.map(({ fieldName, headerName }, index) => {
+              return(
                 <TableCell
-                  key={key}
+                  key={fieldName}
                   style={{
                     textAlign: 'left',
-                    ...(pointsCellStyles({ key }))
+                    ...(customCellStyles({ key: fieldName }))
                   }}
                 >
-                  {row[key]}
-                </TableCell>
-              )
+                  {headerName}
+                </TableCell>)
             })}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {rows.map((row, idx) => (
+            <TableRow
+              key={`row-${idx}`}
+            >
+              {Object.keys(row).map(key => {
+                return (
+                  <TableCell
+                    key={key}
+                    style={{
+                      textAlign: 'left',
+                      ...(customCellStyles({ key }))
+                    }}
+                  >
+                    {row[key]}
+                  </TableCell>
+                )
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 }
 
 const Schedule  = ({ headers, rows = []}) => {
   return (
     <>
+      <h4>Schedule</h4>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -140,7 +151,7 @@ const Schedule  = ({ headers, rows = []}) => {
                   key={cur}
                   style={{
                     textAlign: 'left',
-                    ...(pointsCellStyles({ key: cur }))
+                    ...(customCellStyles({ key: cur }))
                   }}
                 >
                   {cur}
@@ -159,7 +170,7 @@ const Schedule  = ({ headers, rows = []}) => {
                     key={key}
                     style={{
                       textAlign: 'left',
-                      ...(pointsCellStyles({ key }))
+                      ...(customCellStyles({ key }))
                     }}
                   >
                     {row[key]}
