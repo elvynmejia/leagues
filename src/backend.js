@@ -11,8 +11,10 @@ const port = 3001;
 const SFF_URL =
   'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx';
 
-const VALID_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
+const VALID_STANDINGS_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
+
+const VALID_SCHEDULE_HEADERS= ['Date', 'Home', '',	 'Away',	'Time/Status',	'Venue',	'Game Type',	'Officials'];
 
 const parseStats = (context, element) => {
   return element
@@ -45,7 +47,7 @@ const scrapper = async () => {
     .children()
     .toArray()
     .map((element) => $(element).text().trim())
-    .filter((header) => VALID_HEADERS.includes(header));
+    .filter((header) => VALID_STANDINGS_HEADERS.includes(header));
 
   const stats = $(bodyRows)
     .toArray()
@@ -62,12 +64,36 @@ const scrapper = async () => {
     }, {});
   });
 
-  return standings;
+  const scheduleTable = $('#ctl00_C_Schedule1_GridView1 > tbody');
+  const [scheduleHeaderRow, ...scheduleBody] = $(scheduleTable.children());
+
+  const scheduleHeaders = $(scheduleHeaderRow)
+    .children()
+    .toArray()
+    .map(e => $(e).text().trim())
+    .filter(e => VALID_SCHEDULE_HEADERS.includes(e))
+
+  const schedule = $(scheduleBody).toArray().map((item, i) => {
+    return $(item)
+      .children()
+      .toArray()
+      .reduce((acc, e, index) => {
+        return {
+          ...acc,
+          [scheduleHeaders[index]]: $(e).text().trim() ,
+        };
+      }, {})
+  });
+
+  return {
+    standings,
+    schedule
+  };
 };
 
 app.get('/', async (req, res) => {
   res.send({
-    statistics: await scrapper(),
+    ...(await scrapper())
   });
 });
 
