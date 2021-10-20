@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -9,15 +11,12 @@ const app = express();
 app.use(cors());
 app.use(morgan('tiny'));
 
-const port = process.env.PORT || 3001;
-
-const SFF_URL =
-  'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx';
+const port = process.env.API_PORT;
 
 const VALID_STANDINGS_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
 
-const VALID_SCHEDULE_HEADERS= ['Date', 'Home', '',	 'Away',	'Time/Status',	'Venue',	'Game Type',	'Officials'];
+const VALID_SCHEDULE_HEADERS= ['Date', 'Home', '', 'Away', 'Time/Status', 'Venue', 'Game Type', 'Officials'];
 
 const parseStats = (context, element) => {
   return element
@@ -27,13 +26,11 @@ const parseStats = (context, element) => {
     .filter((e) => !INVALID_HEADERS.includes(e));
 };
 
-const getStats = async (url) => {}
-
 const scrapper = async () => {
   let data = [];
 
   try {
-     const response = await axios.get(SFF_URL);
+     const response = await axios.get(process.env.SFF_URL);
      data = response.data;
   } catch(e) {
     console.error('Error loading stats data');
@@ -46,7 +43,7 @@ const scrapper = async () => {
   const standingsTable = $('#ctl00_C_Standings_GridView1 > tbody');
   const [standingsHeaderRow, ...standingBodyRows] = $(standingsTable.children());
 
-  let headers = $(standingsHeaderRow)
+  let standingsHeaderRow = $(standingsHeaderRow)
     .children()
     .toArray()
     .map((element) => $(element).text().trim())
@@ -56,13 +53,13 @@ const scrapper = async () => {
     .toArray()
     .map((e) => parseStats($, $(e)));
 
-  headers = ['Team', ...headers];
+  standingsHeaderRow = ['Team', ...standingsHeaderRow];
 
   const standings = stats.map((fact) => {
     return fact.reduce((accumulator, current, index) => {
       return {
         ...accumulator,
-        [headers[index]]: current,
+        [standingsHeaderRow[index]]: current,
       };
     }, {});
   });

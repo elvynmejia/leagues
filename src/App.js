@@ -26,7 +26,7 @@ const HEADERS = {
 const fetchStats = async () => {
   try {
     const response = (
-        await fetch('http://localhost:3001')
+        await fetch(process.env.REACT_APP_API_URL)
     );
 
     return response.json();
@@ -66,7 +66,7 @@ const App = () => {
 
   const { standings, schedule } = data;
 
-  const columns = [
+  const standingsTableColumns = [
     ...Object.keys(standings[0] || {}).map((key, index) => {
 
       if (!HEADERS[key]) {
@@ -84,7 +84,7 @@ const App = () => {
     <>
       <TableContainer component={Paper}>
         <Standings
-          headers={columns}
+          headers={standingsTableColumns}
           rows={standings}
         />
 
@@ -151,7 +151,7 @@ const Schedule  = ({ headers, rows = []}) => {
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            {headers.map((cur, index) => {
+            {headers.map((cur) => {
               return(
                 <TableCell
                   key={cur}
