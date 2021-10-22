@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '.env' });
 
 const express = require('express');
 const cors = require('cors');
@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const app = express();
 
 app.use(cors());
-app.use(morgan('tiny'));
+app.use(morgan('combined'));
 
 const port = process.env.API_PORT;
 
@@ -41,9 +41,9 @@ const scrapper = async () => {
 
   // parse standings
   const standingsTable = $('#ctl00_C_Standings_GridView1 > tbody');
-  const [standingsHeaderRow, ...standingBodyRows] = $(standingsTable.children());
+  let [standingsHeaderRow, ...standingBodyRows] = $(standingsTable.children());
 
-  let standingsHeaderRow = $(standingsHeaderRow)
+  standingsHeaderRow = $(standingsHeaderRow)
     .children()
     .toArray()
     .map((element) => $(element).text().trim())
