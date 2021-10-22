@@ -5,3 +5,5 @@ Web scrapper to get sff's leagues info
 
 # run frontend
 `npm start`
+
+![Screenshot](standings.png)
