@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from 'react-query';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 const HEADERS = {
   Team: 'Team',
@@ -19,82 +20,83 @@ const HEADERS = {
   GA: 'Goals Against',
   PTS: 'Points',
   GD: 'Goal Difference',
-  WP: 'Winning Percentage'
+  WP: 'Winning Percentage',
+};
+
+// [header, priority]
+const VALID_SCHEDULE_HEADERS = [
+  ['Date', 0],
+  ['Home', 2],
+  ['', 3],
+  ['Away', 4],
+  ['Time/Status', 1],
+  ['Venue', 5],
+  ['Game Type', 6],
+  ['Officials', 7],
+];
+
+const getScheduleTableHeaders = () => {
+  return VALID_SCHEDULE_HEADERS.sort(([_a, a], [_b, b]) => {
+    return a - b;
+  });
 };
 
 const fetchStats = async () => {
   try {
-    const response = (
-        await fetch(process.env.REACT_APP_API_URL)
-    );
+    const response = await fetch(process.env.REACT_APP_API_URL);
 
     return response.json();
-  } catch(e) {
+  } catch (e) {
     console.warn('Error loading data ...');
     console.error(e);
   }
-}
+};
 
 class UnknownTableHeaderKey extends Error {}
 
 const customCellStyles = ({ color = 'red', key, ...rest } = {}) => {
-  const validCells = [
-    'PTS',
-    'Time/Status',
-    'Date'
-  ];
+  const validCells = ['PTS', 'Time/Status', 'Date'];
 
-  return validCells.includes(key) ? { color: color, ...rest }: {};
-}
+  return validCells.includes(key) ? { color: color, ...rest } : {};
+};
 
 const App = () => {
-  const {
-    isLoading,
-    isError,
-    data,
-    error
-  } = useQuery('sff-data', fetchStats);
+  const { isLoading, isError, data, error } = useQuery('sff-data', fetchStats);
 
   if (isLoading) {
-    return <span>Loading...</span>
+    return <span>Loading...</span>;
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>
+    return <span>Error: {error.message}</span>;
   }
 
   const { standings, schedule } = data;
 
-  const standingsTableColumns = [
+  const standingsTableHeaders = [
     ...Object.keys(standings[0] || {}).map((key, index) => {
-
       if (!HEADERS[key]) {
-        throw new UnknownTableHeaderKey(`Unknown header key: ${key}`)
+        throw new UnknownTableHeaderKey(`Unknown header key: ${key}`);
       }
 
       return {
         fieldName: key,
         headerName: HEADERS[key],
       };
-    })
+    }),
   ];
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Standings
-          headers={standingsTableColumns}
-          rows={standings}
-        />
-
-        <Schedule
-          headers={Object.keys(schedule[0] || {})}
-          rows={schedule}
-        />
+      <TableContainer component={Paper} spacing={3}>
+        <Standings headers={standingsTableHeaders} rows={standings} />
+      </TableContainer>
+      <TableContainer component={Paper} spacing={3}>
+        <Schedule headers={getScheduleTableHeaders()} rows={schedule} />
       </TableContainer>
     </>
   );
-}
+};
 
 const Standings = ({ headers, rows }) => {
   return (
@@ -104,36 +106,35 @@ const Standings = ({ headers, rows }) => {
         <TableHead>
           <TableRow>
             {headers.map(({ fieldName, headerName }, index) => {
-              return(
+              return (
                 <TableCell
                   key={fieldName}
                   style={{
                     textAlign: 'left',
-                    ...(customCellStyles({ key: fieldName }))
+                    ...customCellStyles({ key: fieldName }),
                   }}
                 >
                   {headerName}
-                </TableCell>)
+                </TableCell>
+              );
             })}
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, idx) => (
-            <TableRow
-              key={`row-${idx}`}
-            >
-              {Object.keys(row).map(key => {
+            <TableRow key={`row-${idx}`}>
+              {Object.keys(row).map((key) => {
                 return (
                   <TableCell
                     key={key}
                     style={{
                       textAlign: 'left',
-                      ...(customCellStyles({ key }))
+                      ...customCellStyles({ key }),
                     }}
                   >
                     {row[key]}
                   </TableCell>
-                )
+                );
               })}
             </TableRow>
           ))}
@@ -141,53 +142,109 @@ const Standings = ({ headers, rows }) => {
       </Table>
     </>
   );
-}
+};
 
-const Schedule  = ({ headers, rows = []}) => {
+const Schedule = ({ headers, rows = [] }) => {
+  const headerKeys = headers.map(([a]) => a);
+
+  const dataRows = rows.map((row) => {
+    return headerKeys.reduce((accumulator, current) => {
+      return {
+        ...accumulator,
+        [current]: row[current],
+      };
+    }, {});
+  });
+
+  const [date, status, ...rest] = headerKeys;
+
   return (
     <>
       <h4>Schedule</h4>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            {headers.map((cur) => {
-              return(
+            <TableCell
+              key={`${date}-${status}`}
+              style={{
+                textAlign: 'left',
+                ...customCellStyles({ key: date }),
+              }}
+            >
+              Date/Status
+            </TableCell>
+
+            {rest.map((cur) => {
+              return (
                 <TableCell
                   key={cur}
                   style={{
                     textAlign: 'left',
-                    ...(customCellStyles({ key: cur }))
+                    ...customCellStyles({ key: cur }),
                   }}
                 >
                   {cur}
-                </TableCell>)
+                </TableCell>
+              );
             })}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow
-              key={`row-${idx}`}
-            >
-              {Object.keys(row).map(key => {
-                return (
-                  <TableCell
-                    key={key}
-                    style={{
-                      textAlign: 'left',
-                      ...(customCellStyles({ key }))
-                    }}
-                  >
-                    {row[key]}
-                  </TableCell>
-                )
-              })}
-            </TableRow>
-          ))}
+          {dataRows.map((row, idx) => {
+            const [firstCol, secondCol, ...rest] = Object.keys(row);
+            return (
+              <TableRow key={`row-${idx}`}>
+                <TableCell
+                  key={`${firstCol}-${secondCol}`}
+                  style={{
+                    textAlign: 'left',
+                    ...customCellStyles({ key: firstCol }),
+                  }}
+                >
+                  <Stack spacing={1} alignItems="center">
+                    <Stack direction="column" spacing={1}>
+                      <Chip
+                        label={row[firstCol]}
+                        color="primary"
+                        variant="outlined"
+                      />
+                      {row[secondCol].toLowerCase() === 'complete' ? (
+                        <Chip
+                          label="completed"
+                          color="success"
+                          variant="outlined"
+                        />
+                      ) : (
+                        <Chip
+                          label={row[secondCol]}
+                          color="primary"
+                          variant="outlined"
+                        />
+                      )}
+                    </Stack>
+                  </Stack>
+                </TableCell>
+
+                {rest.map((key) => {
+                  return (
+                    <TableCell
+                      key={key}
+                      style={{
+                        textAlign: 'left',
+                        ...customCellStyles({ key }),
+                      }}
+                    >
+                      {row[key] || 'N/A'}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </>
   );
-}
+};
 
 export default App;
