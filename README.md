@@ -1,11 +1,11 @@
 Web scrapper to get sff's leagues info
 
 # run backend
-`cd api`
+`cd api`  
 `node src/backend.js`
 
 # run frontend
-`cd frontend`
+`cd frontend` 
 `npm start`
 
 ![Screenshot](standings.png)
