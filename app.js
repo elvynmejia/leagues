@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(morgan('combined'));
 
-const port = process.env.API_PORT;
+const port = process.env.API_PORT || 3001;
 
 const VALID_STANDINGS_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
@@ -30,7 +30,7 @@ const scrapper = async () => {
   let data = [];
 
   try {
-     const response = await axios.get(process.env.SFF_URL);
+     const response = await axios.get(process.env.SFF_URL || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx');
      data = response.data;
   } catch(e) {
     console.error('Error loading stats data');
