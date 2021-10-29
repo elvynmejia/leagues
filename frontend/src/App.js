@@ -62,13 +62,15 @@ const getScheduleTableHeaders = () => {
 };
 
 const fetchStats = async () => {
-  console.log(process.env);
-  console.log(`process.env.REACT_APP_API_URL => ${process.env.REACT_APP_API_URL}`);
   try {
     const response = await fetch(process.env.REACT_APP_API_URL);
 
     return response.json();
   } catch (e) {
+    console.log(`Error fetching data from ${process.env.REACT_APP_API_URL}`);
+    console.log({
+      e
+    });
     throw e
   }
 };
