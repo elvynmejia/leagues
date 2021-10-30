@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(morgan('combined'));
 
-const port = process.env.API_PORT || 3001;
+const port = process.env.PORT || process.env.API_PORT || 3001;
 
 const VALID_STANDINGS_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
@@ -99,5 +99,8 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Web scrapper listening at http://localhost:${port}`);
+  console.log({
+    env: process.env
+  });
+  console.log(`Web scrapper listening on port:${port}`);
 });
