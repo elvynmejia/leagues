@@ -219,20 +219,17 @@ const Schedule = ({ headers, rows = [] }) => {
               >
                 <Stack spacing={1} alignItems="center">
                   <Stack direction="column" spacing={1}>
-                    <Chip
-                      label={row[firstCol]}
-                      color="primary"
-                      variant="outlined"
-                    />
-                    {row[secondCol].toLowerCase() === 'complete' ? (
+                    <p>{row[firstCol]}</p>
+                    {row[secondCol].toLowerCase() === 'complete' && (
                       <Chip
                         label="completed"
                         color="success"
                         variant="outlined"
                       />
-                    ) : (
+                    )}
+                    {row[secondCol].toLowerCase() === 'pending' && (
                       <Chip
-                        label={row[secondCol]}
+                        label="pending"
                         color="primary"
                         variant="outlined"
                       />
