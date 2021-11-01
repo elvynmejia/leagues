@@ -176,6 +176,17 @@ const Schedule = ({ headers, rows = [] }) => {
 
   const [date, status, ...rest] = headerKeys;
 
+  const getStatus = (st) => {
+    switch (st) {
+      case 'Complete':
+        return <Chip label="completed" color="success" variant="outlined" />;
+      case 'Result Pending':
+        return <Chip label="pending" color="primary" variant="outlined" />;
+      default:
+        return <p>{st}</p>;
+    }
+  };
+
   return (
     <Table aria-label="simple table">
       <TableHead>
@@ -220,20 +231,7 @@ const Schedule = ({ headers, rows = [] }) => {
                 <Stack spacing={1} alignItems="center">
                   <Stack direction="column" spacing={1}>
                     <p>{row[firstCol]}</p>
-                    {row[secondCol].toLowerCase() === 'complete' && (
-                      <Chip
-                        label="completed"
-                        color="success"
-                        variant="outlined"
-                      />
-                    )}
-                    {row[secondCol].toLowerCase() === 'pending' && (
-                      <Chip
-                        label="pending"
-                        color="primary"
-                        variant="outlined"
-                      />
-                    )}
+                    {getStatus(row[secondCol])}
                   </Stack>
                 </Stack>
               </TableCell>
