@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
 
 const VALID_STANDINGS_HEADERS = {
   Team: 'Team',
