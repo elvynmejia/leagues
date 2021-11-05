@@ -96,7 +96,7 @@ const App = () => {
   const { standings, schedule } = data;
 
   return (
-    <Container spacing={3}>
+    <>
       <h4>Standings</h4>
       <TableContainer component={Paper} spacing={3}>
         <Standings headers={getStandingsTableHeaders()} rows={standings} />
@@ -105,7 +105,7 @@ const App = () => {
       <TableContainer component={Paper} spacing={3}>
         <Schedule headers={getScheduleTableHeaders()} rows={schedule} />
       </TableContainer>
-    </Container>
+    </>
   );
 };
 
