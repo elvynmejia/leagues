@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactGA from 'react-ga';
 
 import IconButton from '@mui/material/IconButton';
@@ -9,7 +9,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Leagues from './Leagues';
-
+import useAnalytics from './Analytics';
 const COLOR_MODE = 'colorMode';
 const DARK_MODE = 'dark';
 const LIGHT_MODE = 'light';
@@ -19,10 +19,7 @@ const Root = () => {
     localStorage?.getItem(COLOR_MODE) || LIGHT_MODE
   );
 
-  useEffect(() => {
-    ReactGA.initialize(process.env.REACT_APP_GOOGLE_GA);
-    ReactGA.pageview(window.location.pathname);
-  }, []);
+  useAnalytics();
 
   const theme = createTheme({
     palette: {
