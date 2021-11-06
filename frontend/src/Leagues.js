@@ -75,10 +75,10 @@ const fetchStats = async () => {
   }
 };
 
-const customCellStyles = ({ color = 'red', key, ...rest } = {}) => {
+const customCellStyles = ({ color = 'error.main', key, ...rest } = {}) => {
   const validCells = ['PTS', 'Time/Status', 'Date'];
 
-  return validCells.includes(key) ? { color: color, ...rest } : {};
+  return validCells.includes(key) ? { color: 'error.main', ...rest } : {};
 };
 
 const App = () => {
@@ -129,8 +129,8 @@ const Standings = ({ headers, rows }) => {
                 key={key}
                 style={{
                   textAlign: 'left',
-                  ...customCellStyles({ key }),
                 }}
+                sx={{...customCellStyles({ key })}}
               >
                 {VALID_STANDINGS_HEADERS[key]}
               </TableCell>
@@ -147,8 +147,8 @@ const Standings = ({ headers, rows }) => {
                   key={key}
                   style={{
                     textAlign: 'left',
-                    ...customCellStyles({ key }),
                   }}
+                  sx={{...customCellStyles({ key })}}
                 >
                   {row[key]}
                 </TableCell>
@@ -194,8 +194,8 @@ const Schedule = ({ headers, rows = [] }) => {
             key={`${date}-${status}`}
             style={{
               textAlign: 'left',
-              ...customCellStyles({ key: date }),
             }}
+            sx={{...customCellStyles({ key: date })}}
           >
             Date/Status
           </TableCell>
@@ -206,8 +206,8 @@ const Schedule = ({ headers, rows = [] }) => {
                 key={cur}
                 style={{
                   textAlign: 'left',
-                  ...customCellStyles({ key: cur }),
                 }}
+                sx={{...customCellStyles({ key: cur })}}
               >
                 {cur}
               </TableCell>
@@ -224,8 +224,8 @@ const Schedule = ({ headers, rows = [] }) => {
                 key={`${firstCol}-${secondCol}`}
                 style={{
                   textAlign: 'left',
-                  ...customCellStyles({ key: firstCol }),
                 }}
+                sx={{...customCellStyles({ key: firstCol })}}
               >
                 <Stack spacing={1} alignItems="center">
                   <Stack direction="column" spacing={1}>
@@ -241,8 +241,8 @@ const Schedule = ({ headers, rows = [] }) => {
                     key={key}
                     style={{
                       textAlign: 'left',
-                      ...customCellStyles({ key }),
                     }}
+                    sx={{...customCellStyles({ key })}}
                   >
                     {row[key] || 'N/A'}
                   </TableCell>

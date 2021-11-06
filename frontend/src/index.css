@@ -5,5 +5,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 100% !important
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body > div#root > div {
+  max-width: 100%
 }
