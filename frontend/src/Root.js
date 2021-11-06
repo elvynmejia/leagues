@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactGA from 'react-ga';
 
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
@@ -18,6 +19,11 @@ const Root = () => {
     localStorage?.getItem(COLOR_MODE) || LIGHT_MODE
   );
 
+  useEffect(() => {
+    ReactGA.initialize(process.env.REACT_APP_GOOGLE_GA);
+    ReactGA.pageview(window.location.pathname);
+  }, []);
+
   const theme = createTheme({
     palette: {
       mode,
@@ -25,8 +31,14 @@ const Root = () => {
   });
 
   const toggleColorMode = () => {
+
     setMode((prevMode) => {
       const currentMode = prevMode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
+
+      ReactGA.event({
+        category: 'User',
+        action: `Color mode ${currentMode}`
+      });
 
       localStorage?.setItem(COLOR_MODE, currentMode);
 
