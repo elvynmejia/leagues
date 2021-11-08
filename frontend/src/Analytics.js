@@ -13,7 +13,7 @@ const useAnalytics = () => {
 
   useEffect(() => {
     if (initialized) {
-      ReactGA.pageview(location.pathname + location.search);
+      ReactGA.pageview(window.location.pathname);
     }
   }, [initialized, location]);
 };
