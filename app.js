@@ -6,6 +6,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const morgan = require('morgan');
 
+const fs = require('fs')
+
 const app = express();
 
 app.use(cors());
@@ -33,7 +35,7 @@ const scrapper = async () => {
      const response = await axios.get(process.env.SFF_URL || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx');
      data = response.data;
   } catch(e) {
-    console.error('Error loading stats data');
+    // console.error('Error loading stats data');
     return [];
   }
 
@@ -93,14 +95,24 @@ const scrapper = async () => {
 };
 
 app.get('/', async (req, res) => {
-  res.send({
-    ...(await scrapper())
+  // data for demos
+  const dataFilePath = 'data.json';
+
+  const data = await scrapper();
+
+  if(!fs.existsSync(dataFilePath)) {
+    fs.writeFile(dataFilePath, JSON.stringify(data), (err) => {
+      if (err) throw err;
+    });
+  }
+
+  res.json({
+    ...data
   });
 });
 
 app.listen(port, () => {
-  console.log({
-    env: process.env
-  });
   console.log(`Web scrapper listening on port:${port}`);
 });
+
+module.exports = app;
