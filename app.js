@@ -6,7 +6,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const morgan = require('morgan');
 
-const fs = require('fs')
+const fs = require('fs');
 
 const app = express();
 
@@ -18,23 +18,21 @@ const port = process.env.PORT || process.env.API_PORT || 3001;
 const VALID_STANDINGS_HEADERS = ['GP', 'W', 'L', 'T', 'GF', 'GA', 'PTS', 'GD', 'WP'];
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
 
-const VALID_SCHEDULE_HEADERS= ['Date', 'Home', '', 'Away', 'Time/Status', 'Venue', 'Game Type', 'Officials'];
+const VALID_SCHEDULE_HEADERS = ['Date', 'Home', '', 'Away', 'Time/Status', 'Venue', 'Game Type', 'Officials'];
 
-const parseStats = (context, element) => {
-  return element
-    .children()
-    .toArray()
-    .map((e) => context(e).text().trim())
-    .filter((e) => !INVALID_HEADERS.includes(e));
-};
+const parseStats = (context, element) => element
+  .children()
+  .toArray()
+  .map((e) => context(e).text().trim())
+  .filter((e) => !INVALID_HEADERS.includes(e));
 
 const scrapper = async () => {
   let data = [];
 
   try {
-     const response = await axios.get(process.env.SFF_URL || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx');
-     data = response.data;
-  } catch(e) {
+    const response = await axios.get(process.env.SFF_URL || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx');
+    data = response.data;
+  } catch (e) {
     // console.error('Error loading stats data');
     return [];
   }
@@ -43,7 +41,10 @@ const scrapper = async () => {
 
   // parse standings
   const standingsTable = $('#ctl00_C_Standings_GridView1 > tbody');
-  let [standingsHeaderRow, ...standingBodyRows] = $(standingsTable.children());
+  const standingsTableData = $(standingsTable.children());
+
+  let standingsHeaderRow = standingsTableData[0];
+  const standingBodyRows = standingsTableData.slice(1, standingsTableData.length);
 
   standingsHeaderRow = $(standingsHeaderRow)
     .children()
@@ -57,14 +58,10 @@ const scrapper = async () => {
 
   standingsHeaderRow = ['Team', ...standingsHeaderRow];
 
-  const standings = stats.map((fact) => {
-    return fact.reduce((accumulator, current, index) => {
-      return {
-        ...accumulator,
-        [standingsHeaderRow[index]]: current,
-      };
-    }, {});
-  });
+  const standings = stats.map((fact) => fact.reduce((accumulator, current, index) => ({
+    ...accumulator,
+    [standingsHeaderRow[index]]: current,
+  }), {}));
 
   // parse schedule
   const scheduleTable = $('#ctl00_C_Schedule1_GridView1 > tbody');
@@ -73,24 +70,20 @@ const scrapper = async () => {
   const scheduleHeaders = $(scheduleHeaderRow)
     .children()
     .toArray()
-    .map(e => $(e).text().trim())
-    .filter(e => VALID_SCHEDULE_HEADERS.includes(e))
+    .map((e) => $(e).text().trim())
+    .filter((e) => VALID_SCHEDULE_HEADERS.includes(e));
 
-  const schedule = $(scheduleBodyRows).toArray().map((item, i) => {
-    return $(item)
-      .children()
-      .toArray()
-      .reduce((acc, e, index) => {
-        return {
-          ...acc,
-          [scheduleHeaders[index]]: $(e).text().trim() ,
-        };
-      }, {})
-  });
+  const schedule = $(scheduleBodyRows).toArray().map((item) => $(item)
+    .children()
+    .toArray()
+    .reduce((acc, e, index) => ({
+      ...acc,
+      [scheduleHeaders[index]]: $(e).text().trim(),
+    }), {}));
 
   return {
     standings,
-    schedule
+    schedule,
   };
 };
 
@@ -100,19 +93,17 @@ app.get('/', async (req, res) => {
 
   const data = await scrapper();
 
-  if(!fs.existsSync(dataFilePath)) {
+  if (!fs.existsSync(dataFilePath)) {
     fs.writeFile(dataFilePath, JSON.stringify(data), (err) => {
       if (err) throw err;
     });
   }
 
   res.json({
-    ...data
+    ...data,
   });
 });
 
-app.listen(port, () => {
-  console.log(`Web scrapper listening on port:${port}`);
-});
+app.listen(port);
 
 module.exports = app;
