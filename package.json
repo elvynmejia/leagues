@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha spec/**/*.js --reporter spec --exit",
     "start": "node app.js",
-    "lint": "eslint app.js spec/ --fix"
+    "lint": "eslint app.js app/ spec/ --fix"
   },
   "author": "Elvyn M",
   "license": "ISC",
