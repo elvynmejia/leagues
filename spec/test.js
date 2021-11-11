@@ -15,7 +15,7 @@ describe('api', () => {
     expect(response.status).to.equal(200);
     expect(
       Object.keys(response.body),
-    ).to.have.members(['standings', 'schedule']);
+    ).to.have.members(['standings', 'schedule', 'last_updated_at']);
 
     const teams = standings.map((st) => st.Team);
 
@@ -28,16 +28,17 @@ describe('api', () => {
       'DyDx',
     ]);
 
+    // fragile test
     expect(standings[0]).to.deep.equal({
-      Team: 'InnerThread',
-      GP: '3',
-      W: '3',
-      L: '0',
-      T: '0',
-      GF: '19',
       GA: '0',
-      PTS: '9',
-      GD: '19',
+      GD: '21',
+      GF: '21',
+      GP: '4',
+      L: '0',
+      PTS: '12',
+      T: '0',
+      Team: 'InnerThread',
+      W: '4',
       WP: '1.000',
     });
 

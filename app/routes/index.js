@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
 
   res.json({
     ...data,
+    last_updated_at: (new Date()).toDateString(),
   });
 });
 
