@@ -1,53 +1,23 @@
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 
-const VALID_STANDINGS_HEADERS = {
-  Team: 'Team',
-  GP: 'Games Played',
-  W: 'Wins',
-  L: 'Loses',
-  T: 'Ties',
-  GF: 'Goals for',
-  GA: 'Goals Against',
-  PTS: 'Points',
-  GD: 'Goal Difference',
-  WP: 'Winning Percentage',
-};
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
 
-// [header, priority]
-const STANDINGS_HEADERS = [
-  ['Team', 0],
-  ['PTS', 1],
-  ['W', 2],
-  ['L', 3],
-  ['T', 4],
-  ['GF', 5],
-  ['GA', 6],
-  ['GP', 7],
-  ['GD', 8],
-  ['WP', 9],
-];
+import Standings from './components/standings';
+import Schedule from './components/schedule';
 
-// [header, priority]
-const VALID_SCHEDULE_HEADERS = [
-  ['Date', 0],
-  ['Time/Status', 1],
-  ['Home', 2],
-  ['', 3],
-  ['Away', 4],
-  ['Venue', 5],
-  ['Game Type', 6],
-  ['Officials', 7],
-];
+import {
+  STANDINGS_HEADERS,
+  VALID_SCHEDULE_HEADERS,
+  LEAGUES,
+  LEAGUES_KEYS
+} from './constants';
 
 const getStandingsTableHeaders = () => {
   return STANDINGS_HEADERS.sort(([_a, a], [_b, b]) => {
@@ -61,13 +31,17 @@ const getScheduleTableHeaders = () => {
   });
 };
 
-const fetchStats = async () => {
-  try {
-    const response = await fetch(process.env.REACT_APP_API_URL);
+const fetchStats = async (league) => {
+  const url = [
+    process.env.REACT_APP_API_URL,
+    `league_url=${league}`
+  ].join('?');
 
+  try {
+    const response = await fetch(url);
     return response.json();
   } catch (e) {
-    console.log(`Error fetching data from ${process.env.REACT_APP_API_URL}`);
+    console.log(`Error fetching data from ${url}`);
     console.log({
       e,
     });
@@ -75,14 +49,21 @@ const fetchStats = async () => {
   }
 };
 
-const customCellStyles = ({ color = 'error.main', key, ...rest } = {}) => {
-  const validCells = ['PTS', 'Time/Status', 'Date'];
-
-  return validCells.includes(key) ? { color: 'error.main', ...rest } : {};
-};
-
 const App = () => {
-  const { isLoading, isError, data, error } = useQuery('sff-data', fetchStats);
+  const defaultLeagueUrl = LEAGUES[
+    LEAGUES_KEYS[0]
+  ];
+
+   const [selectedLeagueUrl, setSelectedLeague] = useState(
+     defaultLeagueUrl
+   );
+
+  const {
+    isLoading,
+    isError,
+    data,
+    error
+  } = useQuery(selectedLeagueUrl, () => fetchStats(selectedLeagueUrl));
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -92,10 +73,29 @@ const App = () => {
     return <span>Error: {error.message}</span>;
   }
 
+  const handleListItemClick = (e, league) => {
+    setSelectedLeague(league);
+  }
+
   const { standings, schedule } = data;
 
   return (
     <>
+      <h4>Leagues</h4>
+      <List>
+        {Object.keys(LEAGUES).map(league => {
+          return (
+            <ListItem disablePadding key={league}>
+              <ListItemButton
+                selected={LEAGUES[league] === selectedLeagueUrl}
+                onClick={(event) => handleListItemClick(event, LEAGUES[league])}
+              >
+                <ListItemText primary={league} />
+              </ListItemButton>
+            </ListItem>
+          )
+        })}
+      </List>
       <h4>Standings</h4>
       <TableContainer component={Paper} spacing={3}>
         <Standings headers={getStandingsTableHeaders()} rows={standings} />
@@ -105,154 +105,6 @@ const App = () => {
         <Schedule headers={getScheduleTableHeaders()} rows={schedule} />
       </TableContainer>
     </>
-  );
-};
-
-const Standings = ({ headers, rows }) => {
-  const headerKeys = headers.map(([a]) => a);
-  const dataRows = rows.map((row) => {
-    return headerKeys.reduce((accumulator, current) => {
-      return {
-        ...accumulator,
-        [current]: row[current],
-      };
-    }, {});
-  });
-
-  return (
-    <Table aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          {headerKeys.map((key) => {
-            return (
-              <TableCell
-                key={key}
-                style={{
-                  textAlign: 'left',
-                }}
-                sx={{...customCellStyles({ key })}}
-              >
-                {VALID_STANDINGS_HEADERS[key]}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {dataRows.map((row, idx) => (
-          <TableRow key={`row-${idx}`}>
-            {Object.keys(row).map((key) => {
-              return (
-                <TableCell
-                  key={key}
-                  style={{
-                    textAlign: 'left',
-                  }}
-                  sx={{...customCellStyles({ key })}}
-                >
-                  {row[key]}
-                </TableCell>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
-
-const Schedule = ({ headers, rows = [] }) => {
-  const headerKeys = headers.map(([a]) => a);
-
-  const dataRows = rows.map((row) => {
-    return headerKeys.reduce((accumulator, current) => {
-      return {
-        ...accumulator,
-        [current]: row[current],
-      };
-    }, {});
-  });
-
-  const [date, status, ...rest] = headerKeys;
-
-  const getStatus = (st) => {
-    switch (st) {
-      case 'Complete':
-        return <Chip label="completed" color="success" variant="outlined" />;
-      case 'Result Pending':
-        return <Chip label="pending" color="primary" variant="outlined" />;
-      default:
-        return <p>{st}</p>;
-    }
-  };
-
-  return (
-    <Table aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          <TableCell
-            key={`${date}-${status}`}
-            style={{
-              textAlign: 'left',
-            }}
-            sx={{...customCellStyles({ key: date })}}
-          >
-            Date/Status
-          </TableCell>
-
-          {rest.map((cur) => {
-            return (
-              <TableCell
-                key={cur}
-                style={{
-                  textAlign: 'left',
-                }}
-                sx={{...customCellStyles({ key: cur })}}
-              >
-                {cur}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {dataRows.map((row, idx) => {
-          const [firstCol, secondCol, ...rest] = Object.keys(row);
-          return (
-            <TableRow key={`row-${idx}`}>
-              <TableCell
-                key={`${firstCol}-${secondCol}`}
-                style={{
-                  textAlign: 'left',
-                }}
-                sx={{...customCellStyles({ key: firstCol })}}
-              >
-                <Stack spacing={1} alignItems="center">
-                  <Stack direction="column" spacing={1}>
-                    <p>{row[firstCol]}</p>
-                    {getStatus(row[secondCol])}
-                  </Stack>
-                </Stack>
-              </TableCell>
-
-              {rest.map((key) => {
-                return (
-                  <TableCell
-                    key={key}
-                    style={{
-                      textAlign: 'left',
-                    }}
-                    sx={{...customCellStyles({ key })}}
-                  >
-                    {row[key] || 'N/A'}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
   );
 };
 

@@ -12,25 +12,25 @@ const parseStats = (context, element) => element
   .map((e) => context(e).text().trim())
   .filter((e) => !INVALID_HEADERS.includes(e));
 
-const scrapper = async () => {
+const scrapper = async (leagueUrl) => {
   let data = [];
 
   try {
     const response = await axios.get(
-      process.env.SFF_URL
-      || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx',
+      leagueUrl ||
+      process.env.SFF_URL ||
+      'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx'
     );
-
     data = response.data;
   } catch (e) {
-    // console.error('Error loading stats data');
-    return [];
+    return data;
   }
 
   const $ = cheerio.load(data);
 
   // parse standings
-  const standingsTable = $('#ctl00_C_Standings_GridView1 > tbody');
+  const standingsTable = $('#ctl00_c_Standings_GridView1 > tbody');
+
   const standingsTableData = $(standingsTable.children());
 
   let standingsHeaderRow = standingsTableData[0];
@@ -54,7 +54,7 @@ const scrapper = async () => {
   }), {}));
 
   // parse schedule
-  const scheduleTable = $('#ctl00_C_Schedule1_GridView1 > tbody');
+  const scheduleTable = $('#ctl00_c_Schedule1_GridView1 > tbody');
   const [scheduleHeaderRow, ...scheduleBodyRows] = $(scheduleTable.children());
 
   const scheduleHeaders = $(scheduleHeaderRow)
