@@ -4,13 +4,9 @@ import { useQuery } from 'react-query';
 import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-
 import Standings from './components/standings';
 import Schedule from './components/schedule';
+import LeaguesList from './components/leaguesList';
 
 import {
   STANDINGS_HEADERS,
@@ -82,20 +78,10 @@ const App = () => {
   return (
     <>
       <h4>Leagues</h4>
-      <List>
-        {Object.keys(LEAGUES).map(league => {
-          return (
-            <ListItem disablePadding key={league}>
-              <ListItemButton
-                selected={LEAGUES[league] === selectedLeagueUrl}
-                onClick={(event) => handleListItemClick(event, LEAGUES[league])}
-              >
-                <ListItemText primary={league} />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
+      <LeaguesList
+        handleListItemClick={handleListItemClick}
+        selectedLeagueUrl={selectedLeagueUrl}
+      />
       <h4>Standings</h4>
       <TableContainer component={Paper} spacing={3}>
         <Standings headers={getStandingsTableHeaders()} rows={standings} />
