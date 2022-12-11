@@ -44,10 +44,20 @@ const LEAGUES = {
 
 const LEAGUES_KEYS = Object.keys(LEAGUES);
 
+const COLOR_MODE = 'colorMode';
+const DARK_MODE = 'dark';
+const LIGHT_MODE = 'light';
+
+const CURRENT_SELECTED_LEAGUE = 'currentSelectedLeague';
+
 export {
   VALID_STANDINGS_HEADERS,
   STANDINGS_HEADERS,
   VALID_SCHEDULE_HEADERS,
   LEAGUES,
-  LEAGUES_KEYS
+  LEAGUES_KEYS,
+  COLOR_MODE,
+  DARK_MODE,
+  LIGHT_MODE,
+  CURRENT_SELECTED_LEAGUE
 }

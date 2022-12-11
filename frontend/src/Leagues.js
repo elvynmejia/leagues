@@ -12,7 +12,8 @@ import {
   STANDINGS_HEADERS,
   VALID_SCHEDULE_HEADERS,
   LEAGUES,
-  LEAGUES_KEYS
+  LEAGUES_KEYS,
+  CURRENT_SELECTED_LEAGUE
 } from './constants';
 
 const getStandingsTableHeaders = () => {
@@ -50,9 +51,10 @@ const App = () => {
     LEAGUES_KEYS[0]
   ];
 
-   const [selectedLeagueUrl, setSelectedLeague] = useState(
-     defaultLeagueUrl
-   );
+  const currentLeague = localStorage?.getItem(CURRENT_SELECTED_LEAGUE) || defaultLeagueUrl;
+  const [selectedLeagueUrl, setSelectedLeague] = useState(
+    currentLeague
+  );
 
   const {
     isLoading,
@@ -69,8 +71,9 @@ const App = () => {
     return <span>Error: {error.message}</span>;
   }
 
-  const handleListItemClick = (e, league) => {
+  const handleLeagueChoice = (e, league) => {
     setSelectedLeague(league);
+    localStorage.setItem(CURRENT_SELECTED_LEAGUE, league);
   }
 
   const { standings, schedule } = data;
@@ -79,7 +82,7 @@ const App = () => {
     <>
       <h4>Leagues</h4>
       <LeaguesList
-        handleListItemClick={handleListItemClick}
+        handleListItemClick={handleLeagueChoice}
         selectedLeagueUrl={selectedLeagueUrl}
       />
       <h4>Standings</h4>

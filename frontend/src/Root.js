@@ -10,9 +10,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Leagues from './Leagues';
 import useAnalytics from './Analytics';
-const COLOR_MODE = 'colorMode';
-const DARK_MODE = 'dark';
-const LIGHT_MODE = 'light';
+import { COLOR_MODE, DARK_MODE, LIGHT_MODE } from './constants';
 
 const Root = () => {
   const [mode, setMode] = useState(
