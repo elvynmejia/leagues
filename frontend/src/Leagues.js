@@ -51,7 +51,10 @@ const App = () => {
     LEAGUES_KEYS[0]
   ];
 
-  const currentLeague = localStorage?.getItem(CURRENT_SELECTED_LEAGUE) || defaultLeagueUrl;
+  const currentLeague = localStorage?.getItem(
+    CURRENT_SELECTED_LEAGUE
+  ) || defaultLeagueUrl;
+
   const [selectedLeagueUrl, setSelectedLeague] = useState(
     currentLeague
   );

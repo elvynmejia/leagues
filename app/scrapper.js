@@ -17,9 +17,9 @@ const scrapper = async (leagueUrl) => {
 
   try {
     const response = await axios.get(
-      leagueUrl ||
-      process.env.SFF_URL ||
-      'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx'
+      leagueUrl
+      || process.env.SFF_URL
+      || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx',
     );
     data = response.data;
   } catch (e) {
@@ -29,7 +29,7 @@ const scrapper = async (leagueUrl) => {
   const $ = cheerio.load(data);
 
   // parse standings
-  const standingsTable = $('#ctl00_c_Standings_GridView1 > tbody');
+  const standingsTable = $('#gvStandings > tbody');
 
   const standingsTableData = $(standingsTable.children());
 
