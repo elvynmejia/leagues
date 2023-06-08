@@ -11,6 +11,7 @@ import Schedule from './components/schedule';
 import LeaguesList from './components/leaguesList';
 
 import Chat from './components/chat';
+import LeagueList from './components/leaguesList';
 
 import {
   STANDINGS_HEADERS,
@@ -85,11 +86,13 @@ const App = () => {
   }
 
   const handleLeagueChoice = (e, league) => {
+    e.preventDefault();
     setSelectedLeague(league);
     localStorage.setItem(CURRENT_SELECTED_LEAGUE, league);
   }
 
   const toggleChat = (e) => {
+    e.preventDefault();
     setChatMode((prevMode) => {
       const currentChatMode = !prevMode;
 
@@ -106,9 +109,22 @@ const App = () => {
 
   const { standings, schedule } = data;
 
+  const initialPrompt = [
+    <>
+      <h6>Choose a league you are interested in</h6>
+      <LeagueList
+        handleListItemClick={handleLeagueChoice}
+        selectedLeagueUrl={selectedLeagueUrl}
+      />
+    </>
+  ];
+  
   return (
     <>
-      <ChatOption chatOn={chatOn} toggleChat={toggleChat} />
+      <ChatOption 
+        chatOn={chatOn} 
+        toggleChat={toggleChat}
+      />
       {!chatOn ? (
         <>
           <h4>Leagues</h4>
@@ -126,7 +142,12 @@ const App = () => {
           </TableContainer>
         </>
       ) : (
-        <Chat />
+        <>
+          <p>selected {selectedLeagueUrl }</p>
+          <Chat
+          initialState={initialPrompt}
+        />
+        </>
       )}
 
     </>

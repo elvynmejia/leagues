@@ -14,6 +14,8 @@ import SendIcon from '@mui/icons-material/Send';
 
 import ChatListItem from './chatListItem';
 
+import LeagueList from './../leaguesList';
+
 const generateResponse = () => {
   return [
     {
@@ -30,21 +32,22 @@ const generateResponse = () => {
 //   uuid: string,
 // };
 
-const initialPrompt = [
-  <Typography>What can I help you with today?</Typography>,
-  <Typography>
-    You can ask questions like show me my transactions from today.
-  </Typography>,
-];
+// const initialPrompt = [
+//   <>
+//     <h6>Choose a league you are interested in</h6>
+//     <LeagueList />
+//   </>
+// ];
 
-const aiPrompt = {
-  source: 'ai',
-  content: initialPrompt,
-  createdAt: new Date().getTime(),
-  uuid: uuid.generate(),
-};
+const Chat = ({ initialState }) => {
 
-const Chat = () => {
+  const aiPrompt = {
+    source: 'ai',
+    content: initialState,
+    createdAt: new Date().getTime(),
+    uuid: uuid.generate(),
+  };
+  
   const chatFooterHeight = document.getElementById('chat-footer')?.clientHeight;
 
   const messagesContainerRef = useRef(null);
