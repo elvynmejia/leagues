@@ -13,11 +13,11 @@ import useAnalytics from './Analytics';
 import { COLOR_MODE, DARK_MODE, LIGHT_MODE } from './constants';
 
 const Root = () => {
+  useAnalytics();
+
   const [mode, setMode] = useState(
     localStorage?.getItem(COLOR_MODE) || LIGHT_MODE
   );
-
-  useAnalytics();
 
   const theme = createTheme({
     palette: {
@@ -50,14 +50,14 @@ const Root = () => {
           color: 'text.primary',
         }}
       >
-        <ToogleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+        <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
         <Leagues />
       </Container>
     </ThemeProvider>
   );
 };
 
-const ToogleColorMode = ({ toggleColorMode, mode }) => {
+const ToggleColorMode = ({ toggleColorMode, mode }) => {
   return (
     <p onClick={toggleColorMode} color="inherit" style={{ margin: 0 }}>
       Switch to {mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE} mode

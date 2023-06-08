@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
+import ReactGA from 'react-ga';
+
 import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 
 import Standings from './components/standings';
 import Schedule from './components/schedule';
 import LeaguesList from './components/leaguesList';
+
+import Chat from './components/chat';
 
 import {
   STANDINGS_HEADERS,
@@ -15,6 +19,8 @@ import {
   LEAGUES_KEYS,
   CURRENT_SELECTED_LEAGUE
 } from './constants';
+
+const CHAT_ON = 'CHAT_ON';
 
 const getStandingsTableHeaders = () => {
   return STANDINGS_HEADERS.sort(([_a, a], [_b, b]) => {
@@ -51,6 +57,10 @@ const App = () => {
     LEAGUES_KEYS[0]
   ];
 
+  const [chatOn, setChatMode] = useState(
+    localStorage?.getItem(CHAT_ON) || false
+  );
+
   const currentLeague = localStorage?.getItem(
     CURRENT_SELECTED_LEAGUE
   ) || defaultLeagueUrl;
@@ -79,25 +89,61 @@ const App = () => {
     localStorage.setItem(CURRENT_SELECTED_LEAGUE, league);
   }
 
+  const toggleChat = (e) => {
+    setChatMode((prevMode) => {
+      const currentChatMode = !prevMode;
+
+      ReactGA.event({
+        category: 'User',
+        action: `chat mode ${currentChatMode}`
+      });
+
+      localStorage?.setItem(CHAT_ON, currentChatMode);
+
+      return currentChatMode;
+    });
+  }
+
   const { standings, schedule } = data;
 
   return (
     <>
-      <h4>Leagues</h4>
-      <LeaguesList
-        handleListItemClick={handleLeagueChoice}
-        selectedLeagueUrl={selectedLeagueUrl}
-      />
-      <h4>Standings</h4>
-      <TableContainer component={Paper} spacing={3}>
-        <Standings headers={getStandingsTableHeaders()} rows={standings} />
-      </TableContainer>
-      <h4>Schedule</h4>
-      <TableContainer component={Paper} spacing={3}>
-        <Schedule headers={getScheduleTableHeaders()} rows={schedule} />
-      </TableContainer>
+      <ChatOption chatOn={chatOn} toggleChat={toggleChat} />
+      {!chatOn ? (
+        <>
+          <h4>Leagues</h4>
+          <LeaguesList
+            handleListItemClick={handleLeagueChoice}
+            selectedLeagueUrl={selectedLeagueUrl}
+          />
+          <h4>Standings</h4>
+          <TableContainer component={Paper} spacing={3}>
+            <Standings headers={getStandingsTableHeaders()} rows={standings} />
+          </TableContainer>
+          <h4>Schedule</h4>
+          <TableContainer component={Paper} spacing={3}>
+            <Schedule headers={getScheduleTableHeaders()} rows={schedule} />
+          </TableContainer>
+        </>
+      ) : (
+        <Chat />
+      )}
+
     </>
   );
 };
+
+const ChatOption = ({ chatOn, toggleChat }) => {
+  return (
+    <p onClick={toggleChat} color="inherit" style={{ margin: 0 }}>
+      {/* Switch to {chatOn === LIGHT_MODE ? DARK_MODE : LIGHT_MODE} mode
+      <IconButton sx={{ ml: 1 }} color="inherit">
+        {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton> */}
+      { chatOn === true ? 'Chat on' : 'Chat off' }
+    </p>
+  );
+};
+
 
 export default App;
