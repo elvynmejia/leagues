@@ -11,18 +11,18 @@ load_dotenv()
 
 app = FastAPI()
 
-llm = OpenAI(
-    temperature=0,
-    openai_api_key=environ.get('OPEN_AI_API_KEY')
-)
+llm = OpenAI(temperature=0, openai_api_key=environ.get("OPEN_AI_API_KEY"))
+
 
 class Question(BaseModel):
     question: str
     context: dict
 
+
 @app.get("/")
 def health():
     return "OK"
+
 
 @app.post("/questions", status_code=201)
 def create_answer(question: Question):
@@ -37,15 +37,11 @@ Question: {question}
 Answer: """
 
     prompt_template = PromptTemplate(
-        input_variables=["question", "context"],
-        template=template
+        input_variables=["question", "context"], template=template
     )
 
     answer = llm(
-        prompt_template.format(
-            question=question.question,
-            context=question.context
-        )
+        prompt_template.format(question=question.question, context=question.context)
     )
 
-    return JSONResponse(content={ 'question': question.question, 'answer': answer })
+    return JSONResponse(content={"question": question.question, "answer": answer})

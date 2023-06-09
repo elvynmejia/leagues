@@ -12,6 +12,10 @@ install:
 clean:
 	rm -rf venv
 
+.PHONY: lint-fix
+lint-fix:
+	venv/bin/black .
+	
 # .PHONY: test
 # test:
 # 	venv/bin/pytest -s
