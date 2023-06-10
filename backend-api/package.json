@@ -5,8 +5,9 @@
   "main": "backend.js",
   "scripts": {
     "test": "mocha spec/**/*.js --reporter spec --exit",
-    "start": "node app.js",
-    "lint": "eslint app.js app/ spec/ --fix"
+    "noto": "mocha spec/**/*.js --reporter spec --no-timeout --exit ",
+    "start": "node app/app.js",
+    "lint": "eslint app/ spec/ --fix"
   },
   "author": "Elvyn M",
   "license": "ISC",

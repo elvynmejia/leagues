@@ -5,11 +5,13 @@ const app = require('../app/app');
 const { expect } = chai;
 chai.use(chaiHttp);
 
-global.request = chai.request(app);
+// global.request = chai.request(app);
+
+client = chai.request(app).keepOpen();
 
 describe('api', () => {
   it('/', async () => {
-    const response = await global.request.get('/');
+    const response = await client.get('/');
     const { standings, schedule } = response.body;
 
     expect(response.status).to.equal(200);
@@ -48,5 +50,18 @@ describe('api', () => {
       'Game Type',
       'Officials',
     ]);
+  });
+
+  describe('GET /questions', () => {
+    it('ok', async () => {
+      const query = [
+        `league_url=${process.env.SFF_URL}`,
+        'question=Who is in first place',
+      ].join('&');
+
+      const response = await client.get(`/questions?${query}`);
+      expect(response.status).to.eq(200);
+      expect(Object.keys(response.body)).to.have.members(['question', 'answer']);
+    });
   });
 });

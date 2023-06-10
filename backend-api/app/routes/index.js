@@ -4,26 +4,38 @@ const scrapper = require('../scrapper');
 
 const router = Router();
 
+const config = {
+  llmUrl: process.env.MML_URL,
+};
+
 router.get('/', async (req, res) => {
   const data = await scrapper(req.query.league_url);
 
   res.json({
     ...data,
-    last_updated_at: (new Date()).toDateString(),
+    last_updated_at: new Date().toDateString(),
   });
 });
 
-router.post('/questions', async (req, res) => {
+router.get('/questions', async (req, res, next) => {
   const leagueUrl = req.query.league_url;
-  const mmlContext = await scrapper(req.query.league_url);
+  const userQuestion = req.query.question;
+  const llmContext = await scrapper(leagueUrl);
 
   try {
-    const response = axios.post('http://127.0.0.1:8000/questions', {
-      firstName: 'Fred',
-      lastName: 'Flintstone'
-    })
+    const response = await axios.post(`${config.llmUrl}/questions`, {
+      question: userQuestion,
+      context: llmContext,
+    });
+
+    const { question, answer } = response.data;
+
+    return res.json({
+      question,
+      answer,
+    });
   } catch (error) {
-    
+    return next(error);
   }
 });
 

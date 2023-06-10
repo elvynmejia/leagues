@@ -22,9 +22,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-api/node_modules/
+backend-api/node_modules/
+backend-api/.env
 
 frontend/node_modules/
+
+llm/venv/
+llm/__pycache__/
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

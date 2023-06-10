@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const routes = require('./app/routes');
+const routes = require('./routes');
 
 const logger = console;
 const app = express();
@@ -17,7 +17,7 @@ const port = process.env.PORT || process.env.API_PORT || 3001;
 app.use('/', routes);
 
 app.listen(port, () => {
-    logger.log('Running on port', port)
+  logger.log('Running on port', port);
 });
 
 module.exports = app;
