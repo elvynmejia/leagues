@@ -6,19 +6,20 @@ import TableRow from '@mui/material/TableRow';
 
 import { VALID_STANDINGS_HEADERS } from '../constants';
 
-const customCellStyles = ({ color = 'error.main', key, ...rest } = {}) => {
+const customCellStyles = ({ color = 'error.main', key = '', ...rest } = {}) => {
   const validCells = ['PTS', 'Time/Status', 'Date'];
 
   return validCells.includes(key) ? { color: 'error.main', ...rest } : {};
 };
 
-const Standings = ({ headers, rows }) => {
-  const headerKeys = headers.map(([a]) => a);
-  const dataRows = rows.map((row) => {
-    return headerKeys.reduce((accumulator, current) => {
+const Standings = ({ headers, rows }: { headers: any[], rows: any}) => {
+  const headerKeys = headers.map((a: any) => a[0]);
+  const dataRows = rows.map((row: any) => {
+    return headerKeys.reduce((accumulator: Record<string, string>, current: any) => {
+      const key = current as string;
       return {
         ...accumulator,
-        [current]: row[current],
+        [key]: row[key],
       };
     }, {});
   });
@@ -43,23 +44,25 @@ const Standings = ({ headers, rows }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {dataRows.map((row, idx) => (
-          <TableRow key={`row-${idx}`}>
-            {Object.keys(row).map((key) => {
-              return (
-                <TableCell
-                  key={key}
-                  style={{
-                    textAlign: 'left',
-                  }}
-                  sx={{...customCellStyles({ key })}}
-                >
-                  {row[key]}
-                </TableCell>
-              );
-            })}
-          </TableRow>
-        ))}
+        {dataRows.map((row: Record<string, string>, idx: number) => {
+          return (
+            <TableRow key={`row-${idx}`}>
+              {Object.keys(row).map((key) => {
+                return (
+                  <TableCell
+                    key={key}
+                    style={{
+                      textAlign: 'left',
+                    }}
+                    sx={{...customCellStyles({ key })}}
+                  >
+                    {row[key]}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
   );

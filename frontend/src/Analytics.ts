@@ -6,10 +6,12 @@ const useAnalytics = () => {
   const location = window.location.pathname;
   const [initialized, setInitialized] = useState(false);
 
+  const { REACT_APP_GOOGLE_GA } = process.env;
+
   useEffect(() => {
-    ReactGA.initialize(process.env.REACT_APP_GOOGLE_GA);
+    ReactGA.initialize(REACT_APP_GOOGLE_GA || '');
     setInitialized(true);
-  }, []);
+  }, [REACT_APP_GOOGLE_GA]);
 
   useEffect(() => {
     if (initialized) {

@@ -1,14 +1,14 @@
-const VALID_STANDINGS_HEADERS = {
-  Team: 'Team',
-  GP: 'Games Played',
-  W: 'Wins',
-  L: 'Loses',
-  T: 'Ties',
-  GF: 'Goals for',
-  GA: 'Goals Against',
-  PTS: 'Points',
-  GD: 'Goal Difference',
-  WP: 'Winning Percentage',
+const VALID_STANDINGS_HEADERS: { [key: string]: string } = {
+  'Team': 'Team',
+  'GP': 'Games Played',
+  'W': 'Wins',
+  'L': 'Loses',
+  'T': 'Ties',
+  'GF': 'Goals for',
+  'GA': 'Goals Against',
+  'PTS': 'Points',
+  'GD': 'Goal Difference',
+  'WP': 'Winning Percentage',
 };
 
 // [header, priority]
@@ -37,12 +37,12 @@ const VALID_SCHEDULE_HEADERS = [
   ['Officials', 7],
 ];
 
-const LEAGUES = {
-  'Corporate Coed Championship': 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx',
-  'Mens Intermediate Thursday': 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171034/Mens-Intermediate-Thursday-.aspx'
-};
+const LEAGUES = new Map([
+  ['Corporate Coed Championship', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx'],
+  ['Mens Intermediate Thursday', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171034/Mens-Intermediate-Thursday-.aspx']
+]);
 
-const LEAGUES_KEYS = Object.keys(LEAGUES);
+const LEAGUES_KEYS = [...LEAGUES].map(l => l[0]);
 
 const COLOR_MODE = 'colorMode';
 const DARK_MODE = 'dark';

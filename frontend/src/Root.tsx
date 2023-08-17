@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ReactGA from 'react-ga';
 
 import IconButton from '@mui/material/IconButton';
@@ -11,23 +11,34 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Leagues from './Leagues';
 import useAnalytics from './Analytics';
 import { COLOR_MODE, DARK_MODE, LIGHT_MODE } from './constants';
+import { PaletteMode } from '@mui/material';
+
+declare module '@mui/material/styles' {
+  interface Palette {
+    custom: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    custom?: PaletteOptions['primary'];
+  }
+}
 
 const Root = () => {
   useAnalytics();
 
   const [mode, setMode] = useState(
-    localStorage?.getItem(COLOR_MODE) || LIGHT_MODE
+    (localStorage?.getItem(COLOR_MODE) || LIGHT_MODE)
   );
 
   const theme = createTheme({
     palette: {
-      mode,
+      mode: mode as PaletteMode
     },
   });
 
   const toggleColorMode = () => {
 
-    setMode((prevMode) => {
+    setMode((prevMode: any) => {
       const currentMode = prevMode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
 
       ReactGA.event({
@@ -57,7 +68,7 @@ const Root = () => {
   );
 };
 
-const ToggleColorMode = ({ toggleColorMode, mode }) => {
+const ToggleColorMode = ({ toggleColorMode, mode }: { toggleColorMode: () => void, mode: any }) => {
   return (
     <p onClick={toggleColorMode} color="inherit" style={{ margin: 0 }}>
       Switch to {mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE} mode

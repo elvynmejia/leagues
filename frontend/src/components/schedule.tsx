@@ -6,27 +6,30 @@ import TableRow from '@mui/material/TableRow';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 
-const customCellStyles = ({ color = 'error.main', key, ...rest } = {}) => {
+const customCellStyles = ({ color = 'error.main', key = '', ...rest } = {}) => {
   const validCells = ['PTS', 'Time/Status', 'Date'];
 
   return validCells.includes(key) ? { color: 'error.main', ...rest } : {};
 };
 
-const Schedule = ({ headers, rows = [] }) => {
-  const headerKeys = headers.map(([a]) => a);
+const Schedule = ({ headers, rows = [] }: { headers: any[], rows: any}) => {
+  const headerKeys = headers.map((a: any): string[] => {
+    return a[0];
+  });
 
-  const dataRows = rows.map((row) => {
+  const dataRows = rows.map((row: any) => {
     return headerKeys.reduce((accumulator, current) => {
+      const key = current.toString();
       return {
         ...accumulator,
-        [current]: row[current],
+        [key]: row[key]
       };
-    }, {});
+    }, {} as Record<string, string>);
   });
 
   const [date, status, ...rest] = headerKeys;
 
-  const getStatus = (st) => {
+  const getStatus = (st: string) => {
     switch (st) {
       case 'Complete':
         return <Chip label="completed" color="success" variant="outlined" />;
@@ -46,12 +49,12 @@ const Schedule = ({ headers, rows = [] }) => {
             style={{
               textAlign: 'left',
             }}
-            sx={{...customCellStyles({ key: date })}}
+            sx={{...customCellStyles({ key: date.toString() })}}
           >
             Date/Status
           </TableCell>
 
-          {rest.map((cur) => {
+          {rest.map((cur: any) => {
             return (
               <TableCell
                 key={cur}
@@ -67,7 +70,7 @@ const Schedule = ({ headers, rows = [] }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {dataRows.map((row, idx) => {
+        {dataRows.map((row: any, idx: number) => {
           const [firstCol, secondCol, ...rest] = Object.keys(row);
           return (
             <TableRow key={`row-${idx}`}>
