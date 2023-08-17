@@ -8,11 +8,11 @@ import Standings from './components/standings';
 import Schedule from './components/schedule';
 import LeaguesList from './components/leaguesList';
 
+import useGetLeagues from './hooks/useGetLeagues';
+
 import {
   STANDINGS_HEADERS,
   VALID_SCHEDULE_HEADERS,
-  LEAGUES,
-  LEAGUES_KEYS,
   CURRENT_SELECTED_LEAGUE,
 } from './constants';
 
@@ -44,7 +44,9 @@ const fetchStats = async (league: string) => {
 };
 
 const App = () => {
-  const defaultLeagueUrl = LEAGUES.get(LEAGUES_KEYS[0]);
+  const leagues = useGetLeagues();
+
+  const defaultLeagueUrl = leagues?.data?.leagues[0][1];
 
   const currentLeague =
     localStorage?.getItem(CURRENT_SELECTED_LEAGUE) || defaultLeagueUrl;

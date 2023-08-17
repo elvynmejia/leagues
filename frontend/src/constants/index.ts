@@ -37,14 +37,6 @@ const VALID_SCHEDULE_HEADERS = [
   ['Officials', 7],
 ];
 
-const LEAGUES = new Map([
-  ['Corporate Coed Championship', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx'],
-  ['Mens Intermediate Thursday', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171034/Mens-Intermediate-Thursday-.aspx'],
-  ["Monday Men's Individual League", 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171030/Monday-Men%27s-Individual-League.aspx']
-]);
-
-const LEAGUES_KEYS = [...LEAGUES].map(l => l[0]);
-
 const COLOR_MODE = 'colorMode';
 const DARK_MODE = 'dark';
 const LIGHT_MODE = 'light';
@@ -55,8 +47,6 @@ export {
   VALID_STANDINGS_HEADERS,
   STANDINGS_HEADERS,
   VALID_SCHEDULE_HEADERS,
-  LEAGUES,
-  LEAGUES_KEYS,
   COLOR_MODE,
   DARK_MODE,
   LIGHT_MODE,

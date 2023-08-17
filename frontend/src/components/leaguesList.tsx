@@ -1,26 +1,31 @@
+import { memo } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import { LEAGUES_KEYS, LEAGUES } from '../constants';
+import useGetLeagues from '../hooks/useGetLeagues';
 
-const LeaguesList = ({ 
+const LeaguesList = ({
   handleListItemClick, 
-  selectedLeagueUrl 
+  selectedLeagueUrl
 }: { 
   handleListItemClick: (e: React.MouseEvent<HTMLButtonElement>, selectedLeagueUrl: string) => void, selectedLeagueUrl: string
 }) => {
+
+  const { data } = useGetLeagues();
+
   return (
     <List>
-      {LEAGUES_KEYS.map((league) => {
+      {(data?.leagues || []).map((league: any[]) => {
+        const [name, url] = league;
         return (
-          <ListItem disablePadding key={league}>
+          <ListItem disablePadding key={league.join('-')}>
             <ListItemButton
-              selected={LEAGUES.get(league) === selectedLeagueUrl}
-              onClick={(event: any) => handleListItemClick(event, LEAGUES.get(league) || '')}
+              selected={url === selectedLeagueUrl}
+              onClick={(event: any) => handleListItemClick(event, url)}
             >
-              <ListItemText primary={league} />
+              <ListItemText primary={name} />
             </ListItemButton>
           </ListItem>
         )
@@ -29,4 +34,4 @@ const LeaguesList = ({
   );
 }
 
-export default LeaguesList;
+export default memo(LeaguesList);
