@@ -18,8 +18,6 @@ const scrapper = async (leagueUrl) => {
   try {
     const response = await axios.get(
       leagueUrl
-      || process.env.SFF_URL
-      || 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx',
     );
     data = response.data;
   } catch (e) {

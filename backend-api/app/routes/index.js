@@ -4,11 +4,15 @@ const scrapper = require('../scrapper');
 
 const router = Router();
 
-const config = {
-  llmUrl: process.env.MML_URL,
-};
-
 router.get('/', async (req, res) => {
+  if (!req.query.league_url) {
+    return res.status(422).json({
+      errors: [],
+      message: "Must provide league_url as a url param",
+      code: 'UNPROCESSABLE_ENTITY'
+    });
+  }
+
   const data = await scrapper(req.query.league_url);
 
   res.json({
@@ -17,26 +21,12 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/questions', async (req, res, next) => {
-  const leagueUrl = req.query.league_url;
-  const userQuestion = req.query.question;
-  const llmContext = await scrapper(leagueUrl);
+router.get('/leagues', (re, res) => {
+  const leagues = process.env.LEAGUES.split(',').map(l => {
+    return l.split('<>');
+  });
 
-  try {
-    const response = await axios.post(`${config.llmUrl}/questions`, {
-      question: userQuestion,
-      context: llmContext,
-    });
-
-    const { question, answer } = response.data;
-
-    return res.json({
-      question,
-      answer,
-    });
-  } catch (error) {
-    return next(error);
-  }
+  res.status(200).json({ leagues: leagues });
 });
 
 module.exports = router;
