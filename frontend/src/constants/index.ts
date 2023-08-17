@@ -39,7 +39,8 @@ const VALID_SCHEDULE_HEADERS = [
 
 const LEAGUES = new Map([
   ['Corporate Coed Championship', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/207941/Corporate-Coed-Championship.aspx'],
-  ['Mens Intermediate Thursday', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171034/Mens-Intermediate-Thursday-.aspx']
+  ['Mens Intermediate Thursday', 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171034/Mens-Intermediate-Thursday-.aspx'],
+  ["Monday Men's Individual League", 'https://sff-soccer.ezleagues.ezfacility.com/leagues/171030/Monday-Men%27s-Individual-League.aspx']
 ]);
 
 const LEAGUES_KEYS = [...LEAGUES].map(l => l[0]);

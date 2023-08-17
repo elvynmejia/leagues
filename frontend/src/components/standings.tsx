@@ -13,7 +13,9 @@ const customCellStyles = ({ color = 'error.main', key = '', ...rest } = {}) => {
 };
 
 const Standings = ({ headers, rows }: { headers: any[], rows: any}) => {
+  
   const headerKeys = headers.map((a: any) => a[0]);
+
   const dataRows = rows.map((row: any) => {
     return headerKeys.reduce((accumulator: Record<string, string>, current: any) => {
       const key = current as string;
@@ -23,6 +25,12 @@ const Standings = ({ headers, rows }: { headers: any[], rows: any}) => {
       };
     }, {});
   });
+  
+  const sortedByPoints = dataRows.sort((a: any, b: any) => {
+    return parseInt(b['PTS']) - parseInt(a['PTS'])
+  });
+
+  console.log({sortedByPoints});
 
   return (
     <Table aria-label="simple table">
@@ -44,7 +52,7 @@ const Standings = ({ headers, rows }: { headers: any[], rows: any}) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {dataRows.map((row: Record<string, string>, idx: number) => {
+        {sortedByPoints.map((row: Record<string, string>, idx: number) => {
           return (
             <TableRow key={`row-${idx}`}>
               {Object.keys(row).map((key) => {
