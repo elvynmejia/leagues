@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import scrapper from '../scrapper';
+import scrapper from '../scrapper/index';
 
 const router = Router();
 

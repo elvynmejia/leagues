@@ -10,7 +10,11 @@ const LeaguesList = ({
   handleListItemClick, 
   selectedLeagueUrl
 }: { 
-  handleListItemClick: (e: React.MouseEvent<HTMLButtonElement>, selectedLeagueUrl: string) => void, selectedLeagueUrl: string
+  handleListItemClick: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    selectedLeagueUrl: string
+  ) => void,
+  selectedLeagueUrl: string
 }) => {
 
   const { data } = useGetLeagues();
