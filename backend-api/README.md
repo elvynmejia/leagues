@@ -2,8 +2,9 @@ Web scrapper to get sff's leagues info.
 
 https://main.d3tfcadh0bs4ge.amplifyapp.com/
 # run backend
-`cd api`  
-`node src/backend.js`
+`cd backend-api`  
+`npm run dev` # locally
+`or npm run prod` # in production
 
 # run frontend
 `cd frontend` 
