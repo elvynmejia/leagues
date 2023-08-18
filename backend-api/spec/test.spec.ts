@@ -65,5 +65,5 @@ describe('api', () => {
       expect(leagues).to.have.lengthOf(3);
       expect(leagues[0]).to.have.lengthOf(2);
     });
-  })
+  });
 });

@@ -11,3 +11,6 @@ https://main.d3tfcadh0bs4ge.amplifyapp.com/
 `npm start`
 
 ![Screenshot](standings.png)
+
+# lint
+if errors with linting, switch to the latest node version e.g. nvm use v20.4.0

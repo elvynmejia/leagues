@@ -8,7 +8,7 @@ router.get('/', async (req: Request, res: Response) => {
   if (!leagueUrl) {
     return res.status(422).json({
       errors: [],
-      message: "Must provide league_url as a url param",
+      message: 'Must provide league_url as a url param',
       code: 'UNPROCESSABLE_ENTITY'
     });
   }
