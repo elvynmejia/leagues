@@ -6,13 +6,13 @@ const VALID_SCHEDULE_HEADERS = ['Date', 'Home', '', 'Away', 'Time/Status', 'Venu
 
 const INVALID_HEADERS = ['', 'Calendar Sync', 'Get CalendarCopy Sync URL'];
 
-const parseStats = (context, element) => element
+const parseStats = (context: any, element: any) => element
   .children()
   .toArray()
-  .map((e) => context(e).text().trim())
-  .filter((e) => !INVALID_HEADERS.includes(e));
+  .map((e: any) => context(e).text().trim())
+  .filter((e: any) => !INVALID_HEADERS.includes(e));
 
-const scrapper = async (leagueUrl) => {
+const scrapper = async (leagueUrl: string) => {
   let data = [];
 
   try {
@@ -37,16 +37,16 @@ const scrapper = async (leagueUrl) => {
   standingsHeaderRow = $(standingsHeaderRow)
     .children()
     .toArray()
-    .map((element) => $(element).text().trim())
-    .filter((header) => VALID_STANDINGS_HEADERS.includes(header));
+    .map((element: any) => $(element).text().trim())
+    .filter((header: any) => VALID_STANDINGS_HEADERS.includes(header));
 
   const stats = $(standingBodyRows)
     .toArray()
-    .map((e) => parseStats($, $(e)));
+    .map((e: any) => parseStats($, $(e)));
 
   standingsHeaderRow = ['Team', ...standingsHeaderRow];
 
-  const standings = stats.map((fact) => fact.reduce((accumulator, current, index) => ({
+  const standings = stats.map((fact: any) => fact.reduce((accumulator: any, current: any, index: number) => ({
     ...accumulator,
     [standingsHeaderRow[index]]: current,
   }), {}));
@@ -58,13 +58,13 @@ const scrapper = async (leagueUrl) => {
   const scheduleHeaders = $(scheduleHeaderRow)
     .children()
     .toArray()
-    .map((e) => $(e).text().trim())
-    .filter((e) => VALID_SCHEDULE_HEADERS.includes(e));
+    .map((e: any) => $(e).text().trim())
+    .filter((e: any) => VALID_SCHEDULE_HEADERS.includes(e));
 
-  const schedule = $(scheduleBodyRows).toArray().map((item) => $(item)
+  const schedule = $(scheduleBodyRows).toArray().map((item: any) => $(item)
     .children()
     .toArray()
-    .reduce((acc, e, index) => ({
+    .reduce((acc: any, e: any, index: any) => ({
       ...acc,
       [scheduleHeaders[index]]: $(e).text().trim(),
     }), {}));
@@ -75,4 +75,4 @@ const scrapper = async (leagueUrl) => {
   };
 };
 
-module.exports = scrapper;
+export default scrapper;
