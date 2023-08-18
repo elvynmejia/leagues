@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "postinstall": "npm run tsc",
     "build": "tsc",
-    "start": "tsc && node compiled/app/app.js",
+    "start": "node compiled/app/app.js",
     "test": "mocha -r ts-node/register spec/**/*.spec.ts --reporter spec --exit",
     "noto": "mocha -r ts-node/register spec/**/*.spec.ts --reporter spec --require spec/index.ts --no-timeout --exit",
     "lint": "eslint app/**/*.ts spec/**/*.spec.ts",
